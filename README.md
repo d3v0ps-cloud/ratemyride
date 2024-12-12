@@ -33,8 +33,21 @@ This application allows family members to submit reviews of drivers, including r
 ### Infrastructure
 - Docker
 - Docker Compose
+- GitHub Actions for CI/CD
+- GitHub Container Registry
 
 ## Setup and Installation
+
+### Using Pre-built Container
+1. Pull the container image:
+   ```bash
+   docker pull ghcr.io/[your-github-username]/ratemyride:latest
+   ```
+2. Create a `.env` file with required environment variables
+3. Run the container:
+   ```bash
+   docker run -p 3000:3000 --env-file .env ghcr.io/[your-github-username]/ratemyride:latest
+   ```
 
 ### Local Development
 1. Clone the repository
@@ -70,18 +83,40 @@ This application allows family members to submit reviews of drivers, including r
    ```
 5. Access the application at `http://localhost:3000`
 
+## Container Images
+
+The application is automatically built and published to GitHub Container Registry using GitHub Actions.
+
+### Available Tags
+- `latest`: Latest build from the main branch
+- `vX.Y.Z`: Release versions (e.g., v1.0.0)
+- `vX.Y`: Minor version tags (e.g., v1.0)
+- `sha-XXXXXXX`: Specific commit builds
+
+### CI/CD Pipeline
+The GitHub Actions workflow automatically:
+1. Builds the Docker image
+2. Runs tests (if any)
+3. Publishes to GitHub Container Registry on:
+   - Pushes to main branch
+   - Release tags (v*)
+4. Generates appropriate tags and labels
+
 ## Project Structure
 
 ```
 ratemyride/
+├── .github/
+│   └── workflows/        # GitHub Actions workflows
+│       └── docker-build.yml
 ├── public/
-│   └── index.html      # Frontend interface
-├── server.js           # Express server and API endpoints
-├── package.json        # Project dependencies
-├── Dockerfile          # Docker image configuration
-├── docker-compose.yml  # Docker Compose configuration
-├── .env.example        # Example environment variables
-└── README.md          # Documentation
+│   └── index.html       # Frontend interface
+├── server.js            # Express server and API endpoints
+├── package.json         # Project dependencies
+├── Dockerfile           # Docker image configuration
+├── docker-compose.yml   # Docker Compose configuration
+├── .env.example         # Example environment variables
+└── README.md           # Documentation
 ```
 
 ## Environment Variables
