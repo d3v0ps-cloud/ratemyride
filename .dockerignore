@@ -1,0 +1,25 @@
+# Dependencies
+node_modules
+npm-debug.log
+
+# Version control
+.git
+.gitignore
+
+# Development and test files
+test.js
+nodemon.json
+.eslintrc.json
+
+# Environment variables
+.env
+.env.*
+
+# Docker files
+Dockerfile
+.dockerignore
+
+# Logs and temp files
+*.log
+logs/
+tmp/
