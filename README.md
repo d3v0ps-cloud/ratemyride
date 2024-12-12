@@ -6,6 +6,10 @@ A web application for collecting and managing family driver reviews through a we
 
 This application allows family members to submit reviews of drivers, including ratings and comments. All reviews are automatically sent to a designated Discord channel for easy tracking and visibility.
 
+# Screenshot
+
+![Rate My Ride Demo](demo.jpeg)
+
 ## Features
 
 - Web-based form interface
