@@ -30,18 +30,41 @@ This application allows family members to submit reviews of drivers, including r
 - Multer for form data processing
 - Discord webhook integration
 
+### Infrastructure
+- Docker
+- Docker Compose
+
 ## Setup and Installation
 
+### Local Development
 1. Clone the repository
 2. Install dependencies:
    ```bash
    npm install
    ```
-3. Start the server:
+3. Copy the environment file and configure:
+   ```bash
+   cp .env.example .env
+   ```
+4. Update the `.env` file with your Discord webhook URL
+5. Start the server:
    ```bash
    npm start
    ```
-4. Access the application at `http://localhost:3000`
+6. Access the application at `http://localhost:3000`
+
+### Docker Deployment
+1. Clone the repository
+2. Copy the environment file and configure:
+   ```bash
+   cp .env.example .env
+   ```
+3. Update the `.env` file with your Discord webhook URL
+4. Build and start the Docker container:
+   ```bash
+   docker-compose up --build
+   ```
+5. Access the application at `http://localhost:3000`
 
 ## Project Structure
 
@@ -51,8 +74,22 @@ ratemyride/
 │   └── index.html      # Frontend interface
 ├── server.js           # Express server and API endpoints
 ├── package.json        # Project dependencies
+├── Dockerfile          # Docker image configuration
+├── docker-compose.yml  # Docker Compose configuration
+├── .env.example        # Example environment variables
 └── README.md          # Documentation
 ```
+
+## Environment Variables
+
+The application requires the following environment variables:
+
+- `DISCORD_WEBHOOK_URL`: The webhook URL for your Discord channel
+
+These can be configured by:
+1. Creating a `.env` file based on `.env.example`
+2. Setting the variables in your environment
+3. Passing them through Docker Compose
 
 ## System Requirements
 
