@@ -14,6 +14,11 @@ if (!process.env.DISCORD_WEBHOOK_URL) {
     process.exit(1);
 }
 
+if (!process.env.FAMILY_MEMBERS) {
+    console.error('Error: FAMILY_MEMBERS is not set in environment variables');
+    process.exit(1);
+}
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -23,6 +28,12 @@ const port = 3000;
 // Middleware setup
 app.use(express.static('public'));
 const upload = multer();
+
+// Serve family members list
+app.get('/api/family-members', (req, res) => {
+    const familyMembers = process.env.FAMILY_MEMBERS.split(',').map(member => member.trim());
+    res.json({ familyMembers });
+});
 
 // Handle POST request for form submission
 app.post('/submit', upload.none(), async (req, res) => {

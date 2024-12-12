@@ -10,8 +10,8 @@ This application allows family members to submit reviews of drivers, including r
 
 - Web-based form interface
 - Mobile-responsive design
-- Family member selection
-- Driver selection
+- Dynamic family member selection
+- Dynamic driver selection
 - Interactive 5-star rating system
 - Comment submission
 - Discord integration for review notifications
@@ -46,7 +46,9 @@ This application allows family members to submit reviews of drivers, including r
    ```bash
    cp .env.example .env
    ```
-4. Update the `.env` file with your Discord webhook URL
+4. Update the `.env` file with:
+   - Your Discord webhook URL
+   - List of family members (comma-separated)
 5. Start the server:
    ```bash
    npm start
@@ -59,7 +61,9 @@ This application allows family members to submit reviews of drivers, including r
    ```bash
    cp .env.example .env
    ```
-3. Update the `.env` file with your Discord webhook URL
+3. Update the `.env` file with:
+   - Your Discord webhook URL
+   - List of family members (comma-separated)
 4. Build and start the Docker container:
    ```bash
    docker-compose up --build
@@ -85,11 +89,27 @@ ratemyride/
 The application requires the following environment variables:
 
 - `DISCORD_WEBHOOK_URL`: The webhook URL for your Discord channel
+- `FAMILY_MEMBERS`: Comma-separated list of family members (e.g., "Mum,Dad,Oliver,Jack,Other")
 
 These can be configured by:
 1. Creating a `.env` file based on `.env.example`
 2. Setting the variables in your environment
 3. Passing them through Docker Compose
+
+## API Endpoints
+
+### GET /api/family-members
+Returns the list of configured family members.
+
+Response format:
+```json
+{
+  "familyMembers": ["Mum", "Dad", "Oliver", "Jack", "Other"]
+}
+```
+
+### POST /submit
+Submits a new review.
 
 ## System Requirements
 
@@ -98,8 +118,8 @@ These can be configured by:
 #### User Interface
 - Web-based form interface
 - Responsive and mobile-friendly design
-- Family member selection (Mum, Dad, Oliver, Jack, Other)
-- Driver selection (Mum, Dad, Oliver, Jack, Other)
+- Dynamic family member selection from configured list
+- Dynamic driver selection from configured list
 - 5-star rating system
 - Comment text area
 - Submit button
@@ -141,6 +161,7 @@ These can be configured by:
 - Network connectivity issues
 - Discord API rate limits
 - Failed submission handling
+- Missing environment variables handling
 
 ## Success Criteria
 - Successful form submissions
@@ -148,6 +169,7 @@ These can be configured by:
 - User-friendly interface
 - Responsive design across devices
 - Clear submission confirmation
+- Dynamic loading of family members
 
 ## License
 MIT License

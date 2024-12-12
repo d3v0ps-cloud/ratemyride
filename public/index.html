@@ -33,27 +33,22 @@
             color: #a94442; 
             border: 1px solid #ebccd1; 
         }
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
     </style>
 </head>
 <body>
     <div>
         <div id="message"></div>
-        <form id="reviewForm" action="/submit" method="POST">
-            <div class="selection-group">
+        <div id="loading" class="loading">Loading...</div>
+        <form id="reviewForm" action="/submit" method="POST" style="display: none;">
+            <div id="familyMemberGroup" class="selection-group">
                 <h3>Who are you?</h3>
-                <label><input type="radio" name="family_member" value="Mum" required> Mum</label>
-                <label><input type="radio" name="family_member" value="Dad" required> Dad</label>
-                <label><input type="radio" name="family_member" value="Oliver" required> Oliver</label>
-                <label><input type="radio" name="family_member" value="Jack" required> Jack</label>
-                <label><input type="radio" name="family_member" value="Other" required> Other</label>
             </div>
-            <div class="selection-group">
+            <div id="driverGroup" class="selection-group">
                 <h3>Who was the driver?</h3>
-                <label><input type="radio" name="driver" value="Mum" required> Mum</label>
-                <label><input type="radio" name="driver" value="Dad" required> Dad</label>
-                <label><input type="radio" name="driver" value="Oliver" required> Oliver</label>
-                <label><input type="radio" name="driver" value="Jack" required> Jack</label>
-                <label><input type="radio" name="driver" value="Other" required> Other</label>
             </div>
             <div class="star-rating">
                 <input type="radio" id="5-stars" name="rating" value="5" required />
@@ -87,6 +82,52 @@
         </form>
     </div>
     <script>
+        async function loadFamilyMembers() {
+            try {
+                const response = await fetch('/api/family-members');
+                if (!response.ok) {
+                    throw new Error('Failed to load family members');
+                }
+                const data = await response.json();
+                return data.familyMembers;
+            } catch (error) {
+                console.error('Error loading family members:', error);
+                document.getElementById('message').style.display = 'block';
+                document.getElementById('message').textContent = 'Error loading form. Please refresh the page.';
+                document.getElementById('message').className = 'error';
+                throw error;
+            }
+        }
+
+        function createRadioGroup(members, groupId, name) {
+            const group = document.getElementById(groupId);
+            members.forEach(member => {
+                const label = document.createElement('label');
+                const input = document.createElement('input');
+                input.type = 'radio';
+                input.name = name;
+                input.value = member;
+                input.required = true;
+                label.appendChild(input);
+                label.appendChild(document.createTextNode(` ${member}`));
+                group.appendChild(label);
+            });
+        }
+
+        async function initializeForm() {
+            try {
+                const familyMembers = await loadFamilyMembers();
+                createRadioGroup(familyMembers, 'familyMemberGroup', 'family_member');
+                createRadioGroup(familyMembers, 'driverGroup', 'driver');
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('reviewForm').style.display = 'block';
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeForm);
+
         document.getElementById('reviewForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
