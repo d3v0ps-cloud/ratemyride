@@ -1,14 +1,18 @@
 # Use Node.js LTS version
-FROM node:lts-alpine
+FROM node:18-alpine
 
 # Create app directory
 WORKDIR /usr/src/app
 
-# Copy package files
+# Copy package files first for better caching
 COPY package*.json ./
 
-# Install production dependencies only
-RUN npm ci --only=production
+# Install dependencies with fallback to npm install
+RUN if [ -f package-lock.json ]; then \
+        npm ci --only=production; \
+    else \
+        npm install --only=production; \
+    fi
 
 # Copy app source
 COPY . .
