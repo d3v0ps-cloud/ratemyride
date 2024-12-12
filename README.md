@@ -15,6 +15,7 @@ This application allows family members to submit reviews of drivers, including r
 - Interactive 5-star rating system
 - Comment submission
 - Discord integration for review notifications
+- RESTful API for programmatic access
 
 ## Technical Stack
 
@@ -83,6 +84,79 @@ This application allows family members to submit reviews of drivers, including r
    ```
 5. Access the application at `http://localhost:3000`
 
+## API Documentation
+
+### GET /api/family-members
+Returns the list of configured family members.
+
+#### Request
+```http
+GET /api/family-members
+```
+
+#### Response
+```json
+{
+  "familyMembers": ["Mum", "Dad", "Oliver", "Jack", "Other"]
+}
+```
+
+#### Example
+```bash
+curl http://localhost:3000/api/family-members
+```
+
+### POST /submit
+Submits a new review.
+
+#### Request
+- Content-Type: `application/x-www-form-urlencoded` or `multipart/form-data`
+
+#### Parameters
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| family_member | string | Yes | The name of the family member submitting the review |
+| driver | string | Yes | The name of the driver being reviewed |
+| rating | number | Yes | Rating from 1 to 5 |
+| comment | string | No | Additional comments about the ride |
+
+#### Response
+- Success: Text response with "Thank you for your review!"
+- Error: Text response with error message
+
+#### Example using cURL
+```bash
+curl -X POST http://localhost:3000/submit \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "family_member=Dad" \
+  -d "driver=Mum" \
+  -d "rating=5" \
+  -d "comment=Great driving!"
+```
+
+#### Example using JavaScript Fetch
+```javascript
+fetch('http://localhost:3000/submit', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/x-www-form-urlencoded',
+  },
+  body: new URLSearchParams({
+    family_member: 'Dad',
+    driver: 'Mum',
+    rating: '5',
+    comment: 'Great driving!'
+  })
+})
+.then(response => response.text())
+.then(result => console.log(result))
+.catch(error => console.error('Error:', error));
+```
+
+#### Error Responses
+- 400 Bad Request: Missing required fields
+- 500 Internal Server Error: Failed to send to Discord
+
 ## Container Images
 
 The application is automatically built and published to GitHub Container Registry using GitHub Actions.
@@ -130,21 +204,6 @@ These can be configured by:
 1. Creating a `.env` file based on `.env.example`
 2. Setting the variables in your environment
 3. Passing them through Docker Compose
-
-## API Endpoints
-
-### GET /api/family-members
-Returns the list of configured family members.
-
-Response format:
-```json
-{
-  "familyMembers": ["Mum", "Dad", "Oliver", "Jack", "Other"]
-}
-```
-
-### POST /submit
-Submits a new review.
 
 ## System Requirements
 
