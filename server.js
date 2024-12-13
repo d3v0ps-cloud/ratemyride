@@ -35,6 +35,18 @@ app.get('/api/family-members', (req, res) => {
     res.json({ familyMembers });
 });
 
+// Serve star descriptions
+app.get('/api/star-descriptions', (req, res) => {
+    const descriptions = {
+        1: process.env.STAR_DESCRIPTIONS_1 || 'Terrible ride, I feared for my life',
+        2: process.env.STAR_DESCRIPTIONS_2 || 'Below average driving, needs improvement',
+        3: process.env.STAR_DESCRIPTIONS_3 || 'Average ride, got me there safely',
+        4: process.env.STAR_DESCRIPTIONS_4 || 'Great ride, felt safe and comfortable',
+        5: process.env.STAR_DESCRIPTIONS_5 || 'Excellent ride, perfect driving skills'
+    };
+    res.json({ descriptions });
+});
+
 // Handle POST request for form submission
 app.post('/submit', upload.none(), async (req, res) => {
     const { rating, family_member, driver, comment } = req.body;

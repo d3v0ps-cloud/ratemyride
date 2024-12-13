@@ -96,6 +96,8 @@
         </form>
     </div>
     <script>
+        let starDescriptions = {};
+
         async function loadFamilyMembers() {
             try {
                 const response = await fetch('/api/family-members');
@@ -110,6 +112,27 @@
                 document.getElementById('message').textContent = 'Error loading form. Please refresh the page.';
                 document.getElementById('message').className = 'error';
                 throw error;
+            }
+        }
+
+        async function loadStarDescriptions() {
+            try {
+                const response = await fetch('/api/star-descriptions');
+                if (!response.ok) {
+                    throw new Error('Failed to load star descriptions');
+                }
+                const data = await response.json();
+                starDescriptions = data.descriptions;
+            } catch (error) {
+                console.error('Error loading star descriptions:', error);
+                // Use default descriptions if loading fails
+                starDescriptions = {
+                    1: 'Terrible ride, I feared for my life',
+                    2: 'Below average driving, needs improvement',
+                    3: 'Average ride, got me there safely',
+                    4: 'Great ride, felt safe and comfortable',
+                    5: 'Excellent ride, perfect driving skills'
+                };
             }
         }
 
@@ -157,9 +180,13 @@
 
         async function initializeForm() {
             try {
-                const familyMembers = await loadFamilyMembers();
-                createRadioGroup(familyMembers, 'familyMemberGroup', 'family_member');
-                createRadioGroup(familyMembers, 'driverGroup', 'driver');
+                await Promise.all([
+                    loadFamilyMembers().then(familyMembers => {
+                        createRadioGroup(familyMembers, 'familyMemberGroup', 'family_member');
+                        createRadioGroup(familyMembers, 'driverGroup', 'driver');
+                    }),
+                    loadStarDescriptions()
+                ]);
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('reviewForm').style.display = 'block';
             } catch (error) {
@@ -210,6 +237,10 @@
         document.querySelectorAll('.star-rating input').forEach(input => {
             input.addEventListener('change', (event) => {
                 const rating = event.target.value;
+                const textarea = document.querySelector('textarea[name="comment"]');
+                // Set the actual value of the textarea, not just the placeholder
+                textarea.value = starDescriptions[rating] || '';
+                
                 for (let i = 1; i <= 5; i++) {
                     const star = document.getElementById(i + '-stars') || document.getElementById(i + '-star');
                     star.checked = i <= rating;
