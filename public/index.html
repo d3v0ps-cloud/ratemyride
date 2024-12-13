@@ -4,149 +4,308 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Family Member Review Form</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
     <style>
         :root {
-            --bg-color: #ffffff;
+            --bg-color: #f2f2f7;
+            --card-bg: #ffffff;
             --text-color: #000000;
+            --label-color: #6c6c70;
             --input-bg: #ffffff;
-            --input-border: #ccc;
+            --input-border: #e5e5ea;
+            --primary-color: #007aff;
+            --success-bg: #34c759;
+            --error-bg: #ff3b30;
+            --radius-large: 12px;
+            --radius-medium: 8px;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
         }
 
         [data-theme="dark"] {
-            --bg-color: #1a1a1a;
+            --bg-color: #000000;
+            --card-bg: #1c1c1e;
             --text-color: #ffffff;
-            --input-bg: #2d2d2d;
-            --input-border: #404040;
+            --label-color: #98989d;
+            --input-bg: #2c2c2e;
+            --input-border: #3a3a3c;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body { 
-            font-family: Arial, sans-serif; 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            height: 100vh; 
+            min-height: 100vh; 
             margin: 0; 
             background-color: var(--bg-color);
             color: var(--text-color);
-            transition: background-color 0.3s, color 0.3s;
+            transition: all 0.3s ease;
+            padding: 20px;
+            line-height: 1.5;
         }
+
+        .card {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: var(--radius-large);
+            box-shadow: var(--shadow);
+            width: 100%;
+            max-width: 480px;
+            transition: all 0.3s ease;
+        }
+
         form { text-align: center; }
-        .star-rating { font-size: 0; display: inline-flex; flex-direction: row-reverse; margin-bottom: 20px; }
+
+        .star-rating { 
+            font-size: 0; 
+            display: inline-flex; 
+            flex-direction: row-reverse; 
+            margin: 24px 0;
+            gap: 12px;
+        }
+
         .star-rating input { display: none; }
-        .star-rating label { font-size: 30px; color: #ccc; cursor: pointer; display: flex; flex-direction: column; align-items: center; margin: 0 5px; }
-        .star-rating :checked ~ label { color: #f90; }
-        .star-rating label:hover, .star-rating label:hover ~ label { color: #fc0; }
-        .star-number { font-size: 16px; margin-top: 5px; }
-        .selection-group { margin-bottom: 20px; }
-        .selection-group label { margin-right: 10px; }
-        h3 { margin-bottom: 10px; }
+
+        .star-rating label { 
+            font-size: 36px; 
+            color: var(--input-border);
+            cursor: pointer; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            transition: all 0.2s ease;
+            transform: scale(1);
+        }
+
+        .star-rating :checked ~ label { color: var(--primary-color); }
+        
+        .star-rating label:hover, 
+        .star-rating label:hover ~ label { 
+            color: var(--primary-color);
+            transform: scale(1.1);
+        }
+
+        .star-number { 
+            font-size: 14px;
+            margin-top: 4px;
+            color: var(--label-color);
+            font-weight: 500;
+        }
+
+        .selection-group {
+            margin-bottom: 32px;
+            text-align: left;
+        }
+
+        h3 { 
+            margin-bottom: 16px;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .radio-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .radio-group label {
+            position: relative;
+            padding: 10px 16px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: var(--radius-medium);
+            cursor: pointer;
+            text-align: center;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .radio-group input[type="radio"] {
+            display: none;
+        }
+
+        .radio-group input[type="radio"]:checked + label {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
         textarea { 
             width: 100%; 
-            height: 100px; 
-            margin-bottom: 20px; 
+            height: 120px; 
+            margin-bottom: 24px; 
             background-color: var(--input-bg);
             color: var(--text-color);
             border: 1px solid var(--input-border);
-            padding: 8px;
-            border-radius: 4px;
+            padding: 12px;
+            border-radius: var(--radius-medium);
+            font-family: inherit;
+            font-size: 15px;
+            resize: none;
+            transition: all 0.2s ease;
         }
-        #message { 
-            display: none; 
-            padding: 10px; 
-            margin: 10px 0; 
-            border-radius: 4px; 
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
         }
-        .success { 
-            background-color: #dff0d8; 
-            color: #3c763d; 
-            border: 1px solid #d6e9c6; 
-        }
-        .error { 
-            background-color: #f2dede; 
-            color: #a94442; 
-            border: 1px solid #ebccd1; 
-        }
-        .loading {
-            text-align: center;
-            padding: 20px;
-        }
+
         .custom-member-input {
-            margin-top: 10px;
-            padding: 8px;
-            width: 200px;
+            width: 100%;
+            padding: 12px;
             border: 1px solid var(--input-border);
-            border-radius: 4px;
+            border-radius: var(--radius-medium);
+            margin-top: 8px;
             display: none;
             background-color: var(--input-bg);
             color: var(--text-color);
+            font-family: inherit;
+            font-size: 15px;
+            transition: all 0.2s ease;
         }
-        .other-option {
-            display: block;
-            margin-top: 10px;
+
+        .custom-member-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
         }
+
         button {
-            padding: 8px 16px;
-            border-radius: 4px;
-            border: 1px solid var(--input-border);
-            background-color: var(--input-bg);
-            color: var(--text-color);
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: var(--radius-large);
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            font-family: inherit;
         }
-        button:hover {
-            opacity: 0.9;
+
+        button:active {
+            transform: scale(0.98);
         }
+
         #theme-toggle {
             position: fixed;
             top: 20px;
             right: 20px;
-            padding: 8px 16px;
-            border-radius: 4px;
-            border: 1px solid var(--input-border);
-            background-color: var(--input-bg);
+            padding: 12px;
+            width: auto;
+            border-radius: 50%;
+            background: var(--card-bg);
             color: var(--text-color);
-            cursor: pointer;
-            z-index: 1000;
+            box-shadow: var(--shadow);
+            font-size: 20px;
+        }
+
+        #message { 
+            display: none; 
+            padding: 16px;
+            margin-bottom: 24px;
+            border-radius: var(--radius-medium);
+            font-weight: 500;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-10px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .success { 
+            background-color: var(--success-bg);
+            color: white;
+        }
+
+        .error { 
+            background-color: var(--error-bg);
+            color: white;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 24px;
+            color: var(--label-color);
+            font-weight: 500;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 20px;
+            }
+            
+            .star-rating {
+                gap: 8px;
+            }
+
+            .star-rating label {
+                font-size: 32px;
+            }
         }
     </style>
 </head>
 <body>
-    <button id="theme-toggle">🌓 Dark / Light</button>
-    <div>
+    <button id="theme-toggle">🌓</button>
+    <div class="card">
         <div id="message"></div>
         <div id="loading" class="loading">Loading...</div>
         <form id="reviewForm" action="/submit" method="POST" style="display: none;">
             <div id="familyMemberGroup" class="selection-group">
                 <h3>Who are you?</h3>
+                <div class="radio-group"></div>
                 <input type="text" id="customFamilyMember" name="custom_family_member" class="custom-member-input" placeholder="Enter your name">
             </div>
             <div id="driverGroup" class="selection-group">
                 <h3>Who was the driver?</h3>
+                <div class="radio-group"></div>
                 <input type="text" id="customDriver" name="custom_driver" class="custom-member-input" placeholder="Enter driver's name">
             </div>
             <div class="star-rating">
                 <input type="radio" id="5-stars" name="rating" value="5" required />
                 <label for="5-stars">
-                    &#9733;
+                    ★
                     <span class="star-number">5</span>
                 </label>
                 <input type="radio" id="4-stars" name="rating" value="4" />
                 <label for="4-stars">
-                    &#9733;
+                    ★
                     <span class="star-number">4</span>
                 </label>
                 <input type="radio" id="3-stars" name="rating" value="3" />
                 <label for="3-stars">
-                    &#9733;
+                    ★
                     <span class="star-number">3</span>
                 </label>
                 <input type="radio" id="2-stars" name="rating" value="2" />
                 <label for="2-stars">
-                    &#9733;
+                    ★
                     <span class="star-number">2</span>
                 </label>
                 <input type="radio" id="1-star" name="rating" value="1" />
                 <label for="1-star">
-                    &#9733;
+                    ★
                     <span class="star-number">1</span>
                 </label>
             </div>
@@ -184,7 +343,6 @@
                 starDescriptions = data.descriptions;
             } catch (error) {
                 console.error('Error loading star descriptions:', error);
-                // Use default descriptions if loading fails
                 starDescriptions = {
                     1: 'Terrible ride, I feared for my life',
                     2: 'Below average driving, needs improvement',
@@ -196,33 +354,40 @@
         }
 
         function createRadioGroup(members, groupId, name) {
-            const group = document.getElementById(groupId);
+            const group = document.querySelector(`#${groupId} .radio-group`);
             members.forEach(member => {
-                const label = document.createElement('label');
                 const input = document.createElement('input');
                 input.type = 'radio';
                 input.name = name;
                 input.value = member;
+                input.id = `${name}-${member}`;
                 input.required = true;
-                label.appendChild(input);
-                label.appendChild(document.createTextNode(` ${member}`));
+
+                const label = document.createElement('label');
+                label.setAttribute('for', `${name}-${member}`);
+                label.textContent = member;
+
+                group.appendChild(input);
                 group.appendChild(label);
             });
 
             // Add "Other" option
-            const otherLabel = document.createElement('label');
-            otherLabel.className = 'other-option';
             const otherInput = document.createElement('input');
             otherInput.type = 'radio';
             otherInput.name = name;
             otherInput.value = 'other';
+            otherInput.id = `${name}-other`;
             otherInput.required = true;
-            otherLabel.appendChild(otherInput);
-            otherLabel.appendChild(document.createTextNode(' Other'));
+
+            const otherLabel = document.createElement('label');
+            otherLabel.setAttribute('for', `${name}-other`);
+            otherLabel.textContent = 'Other';
+
+            group.appendChild(otherInput);
             group.appendChild(otherLabel);
 
             // Show/hide custom input based on "Other" selection
-            const customInput = group.querySelector('.custom-member-input');
+            const customInput = document.querySelector(`#${groupId} .custom-member-input`);
             otherInput.addEventListener('change', () => {
                 customInput.style.display = otherInput.checked ? 'block' : 'none';
                 customInput.required = otherInput.checked;
@@ -256,11 +421,9 @@
         document.addEventListener('DOMContentLoaded', () => {
             initializeForm();
             
-            // Initialize theme
             const savedTheme = localStorage.getItem('theme') || 'light';
             document.documentElement.setAttribute('data-theme', savedTheme);
             
-            // Theme toggle functionality
             document.getElementById('theme-toggle').addEventListener('click', () => {
                 const currentTheme = document.documentElement.getAttribute('data-theme');
                 const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -273,7 +436,6 @@
             e.preventDefault();
             const formData = new FormData(e.target);
             
-            // Handle custom entries
             if (formData.get('family_member') === 'other') {
                 formData.set('family_member', formData.get('custom_family_member'));
             }
