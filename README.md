@@ -16,7 +16,9 @@ This application allows family members to submit reviews of drivers, including r
 - Mobile-responsive design
 - Dynamic family member selection
 - Dynamic driver selection
+- Custom name input for non-listed members
 - Interactive 5-star rating system
+- Auto-populated review comments based on rating
 - Comment submission
 - Discord integration for review notifications
 - RESTful API for programmatic access
@@ -67,6 +69,7 @@ This application allows family members to submit reviews of drivers, including r
 4. Update the `.env` file with:
    - Your Discord webhook URL
    - List of family members (comma-separated)
+   - Star rating descriptions (optional)
 5. Start the server:
    ```bash
    npm start
@@ -82,11 +85,37 @@ This application allows family members to submit reviews of drivers, including r
 3. Update the `.env` file with:
    - Your Discord webhook URL
    - List of family members (comma-separated)
+   - Star rating descriptions (optional)
 4. Build and start the Docker container:
    ```bash
    docker-compose up --build
    ```
 5. Access the application at `http://localhost:3000`
+
+## Using the Application
+
+### Family Member and Driver Selection
+The application provides two selection groups:
+1. "Who are you?" - For selecting the reviewer
+2. "Who was the driver?" - For selecting the person being reviewed
+
+Each selection group includes:
+- Radio buttons for pre-configured family members from the FAMILY_MEMBERS environment variable
+- An "Other" option that, when selected:
+  - Shows a text input field
+  - Allows entering a custom name
+  - The custom name will be used in place of "Other" in the review
+  - The text input is required when "Other" is selected
+  - The text input is hidden when any other option is selected
+
+### Star Rating and Comments
+- Select a rating from 1 to 5 stars
+- When a star is selected:
+  - The comment field is automatically populated with the corresponding description
+  - The description comes from STAR_DESCRIPTIONS_* environment variables if set
+  - Default descriptions are used if no custom ones are provided
+- The populated comment can be modified before submission
+- If unmodified, the auto-populated text will be submitted with the review
 
 ## API Documentation
 
@@ -110,6 +139,32 @@ GET /api/family-members
 curl http://localhost:3000/api/family-members
 ```
 
+### GET /api/star-descriptions
+Returns the configured descriptions for each star rating.
+
+#### Request
+```http
+GET /api/star-descriptions
+```
+
+#### Response
+```json
+{
+  "descriptions": {
+    "1": "Terrible ride, I feared for my life",
+    "2": "Below average driving, needs improvement",
+    "3": "Average ride, got me there safely",
+    "4": "Great ride, felt safe and comfortable",
+    "5": "Excellent ride, perfect driving skills"
+  }
+}
+```
+
+#### Example
+```bash
+curl http://localhost:3000/api/star-descriptions
+```
+
 ### POST /submit
 Submits a new review.
 
@@ -119,10 +174,12 @@ Submits a new review.
 #### Parameters
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| family_member | string | Yes | The name of the family member submitting the review |
-| driver | string | Yes | The name of the driver being reviewed |
+| family_member | string | Yes | The name of the family member submitting the review (or custom name if "Other" was selected) |
+| custom_family_member | string | No | Custom name when "Other" is selected for family member |
+| driver | string | Yes | The name of the driver being reviewed (or custom name if "Other" was selected) |
+| custom_driver | string | No | Custom name when "Other" is selected for driver |
 | rating | number | Yes | Rating from 1 to 5 |
-| comment | string | No | Additional comments about the ride |
+| comment | string | No | Additional comments about the ride (auto-populated based on rating if not modified) |
 
 #### Response
 - Success: Text response with "Thank you for your review!"
@@ -204,6 +261,22 @@ The application requires the following environment variables:
 - `DISCORD_WEBHOOK_URL`: The webhook URL for your Discord channel
 - `FAMILY_MEMBERS`: Comma-separated list of family members (e.g., "Mum,Dad,Oliver,Jack,Other")
 
+Optional star rating description variables:
+- `STAR_DESCRIPTIONS_1`: Description for 1-star rating
+- `STAR_DESCRIPTIONS_2`: Description for 2-star rating
+- `STAR_DESCRIPTIONS_3`: Description for 3-star rating
+- `STAR_DESCRIPTIONS_4`: Description for 4-star rating
+- `STAR_DESCRIPTIONS_5`: Description for 5-star rating
+
+If star descriptions are not provided, default descriptions will be used:
+```
+1 star: "Terrible ride, I feared for my life"
+2 stars: "Below average driving, needs improvement"
+3 stars: "Average ride, got me there safely"
+4 stars: "Great ride, felt safe and comfortable"
+5 stars: "Excellent ride, perfect driving skills"
+```
+
 These can be configured by:
 1. Creating a `.env` file based on `.env.example`
 2. Setting the variables in your environment
@@ -218,7 +291,8 @@ These can be configured by:
 - Responsive and mobile-friendly design
 - Dynamic family member selection from configured list
 - Dynamic driver selection from configured list
-- 5-star rating system
+- Custom name input for "Other" selections
+- 5-star rating system with auto-populated review text
 - Comment text area
 - Submit button
 
@@ -227,6 +301,7 @@ These can be configured by:
 - Data validation
 - Discord webhook integration
 - Submission confirmation
+- Custom name handling for "Other" selections
 
 ### Non-Functional Requirements
 
@@ -243,6 +318,8 @@ These can be configured by:
 - Consistent styling
 - Clear visual feedback
 - Responsive design for all screen sizes
+- Auto-populated review text based on rating
+- Seamless custom name input for "Other" selections
 
 #### Browser Compatibility
 - Support for modern web browsers
@@ -260,6 +337,7 @@ These can be configured by:
 - Discord API rate limits
 - Failed submission handling
 - Missing environment variables handling
+- Invalid custom name inputs
 
 ## Success Criteria
 - Successful form submissions
@@ -268,6 +346,8 @@ These can be configured by:
 - Responsive design across devices
 - Clear submission confirmation
 - Dynamic loading of family members
+- Auto-populated review text based on rating
+- Proper handling of custom names for "Other" selections
 
 ## License
 MIT License
