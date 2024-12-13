@@ -37,6 +37,18 @@
             text-align: center;
             padding: 20px;
         }
+        .custom-member-input {
+            margin-top: 10px;
+            padding: 8px;
+            width: 200px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            display: none;
+        }
+        .other-option {
+            display: block;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -46,9 +58,11 @@
         <form id="reviewForm" action="/submit" method="POST" style="display: none;">
             <div id="familyMemberGroup" class="selection-group">
                 <h3>Who are you?</h3>
+                <input type="text" id="customFamilyMember" name="custom_family_member" class="custom-member-input" placeholder="Enter your name">
             </div>
             <div id="driverGroup" class="selection-group">
                 <h3>Who was the driver?</h3>
+                <input type="text" id="customDriver" name="custom_driver" class="custom-member-input" placeholder="Enter driver's name">
             </div>
             <div class="star-rating">
                 <input type="radio" id="5-stars" name="rating" value="5" required />
@@ -112,6 +126,33 @@
                 label.appendChild(document.createTextNode(` ${member}`));
                 group.appendChild(label);
             });
+
+            // Add "Other" option
+            const otherLabel = document.createElement('label');
+            otherLabel.className = 'other-option';
+            const otherInput = document.createElement('input');
+            otherInput.type = 'radio';
+            otherInput.name = name;
+            otherInput.value = 'other';
+            otherInput.required = true;
+            otherLabel.appendChild(otherInput);
+            otherLabel.appendChild(document.createTextNode(' Other'));
+            group.appendChild(otherLabel);
+
+            // Show/hide custom input based on "Other" selection
+            const customInput = group.querySelector('.custom-member-input');
+            otherInput.addEventListener('change', () => {
+                customInput.style.display = otherInput.checked ? 'block' : 'none';
+                customInput.required = otherInput.checked;
+            });
+
+            // Hide custom input when any other radio is selected
+            group.querySelectorAll('input[type="radio"]:not([value="other"])').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    customInput.style.display = 'none';
+                    customInput.required = false;
+                });
+            });
         }
 
         async function initializeForm() {
@@ -131,6 +172,14 @@
         document.getElementById('reviewForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
+            
+            // Handle custom entries
+            if (formData.get('family_member') === 'other') {
+                formData.set('family_member', formData.get('custom_family_member'));
+            }
+            if (formData.get('driver') === 'other') {
+                formData.set('driver', formData.get('custom_driver'));
+            }
             
             try {
                 const response = await fetch('/submit', {
