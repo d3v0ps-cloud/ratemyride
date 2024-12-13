@@ -8,7 +8,7 @@ This application allows family members to submit reviews of drivers, including r
 
 # Screenshot
 
-![Rate My Ride Demo](demo.jpeg)
+![Rate My Ride Demo](demo.png)
 
 ## Features
 
