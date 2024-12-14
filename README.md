@@ -48,12 +48,12 @@ This application allows family members to submit reviews of drivers, including r
 ### Using Pre-built Container
 1. Pull the container image:
    ```bash
-   docker pull ghcr.io/[your-github-username]/ratemyride:latest
+   docker pull ghcr.io/d3v0ps-cloud/ratemyride:latest
    ```
 2. Create a `.env` file with required environment variables
 3. Run the container:
    ```bash
-   docker run -p 3000:3000 --env-file .env ghcr.io/[your-github-username]/ratemyride:latest
+   docker run -p 3000:3000 --env-file .env ghcr.io/d3v0ps-cloud/ratemyride:latest
    ```
 
 ### Local Development
