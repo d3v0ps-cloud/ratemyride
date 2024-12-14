@@ -46,6 +46,7 @@ This application allows family members to submit reviews of drivers, including r
 ## Setup and Installation
 
 ### Using Pre-built Container
+#### Option 1
 1. Pull the container image:
    ```bash
    docker pull ghcr.io/d3v0ps-cloud/ratemyride:latest
@@ -55,6 +56,17 @@ This application allows family members to submit reviews of drivers, including r
    ```bash
    docker run -p 3000:3000 --env-file .env ghcr.io/d3v0ps-cloud/ratemyride:latest
    ```
+#### Option 2
+1. Clone the repository
+2. Copy the environment file and configure:
+   ```bash
+   cp .env.example .env
+   ```
+3. Start the Docker container:
+   ```bash
+   docker-compose up -f docker-compose-prebuilt.yml
+   ```
+4. Access the application at `http://localhost:3000`
 
 ### Local Development
 1. Clone the repository
