@@ -12,7 +12,7 @@
         "lint:fix": "eslint . --fix"
     },
     "dependencies": {
-        "dotenv": "^17.4.2",
+        "dotenv": "^18.0.3",
         "express": "^5.1.0",
         "form-data": "^4.0.0",
         "multer": "^2.1.1",
